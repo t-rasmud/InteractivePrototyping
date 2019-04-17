@@ -20,11 +20,13 @@ int b = 0;
 int g = 0;
 int rgb[3];
 
-double vibgyor[3] = {240.0, 120.0, 0.0};
-double vibgyor_l[3] = {0.5, 0.25, 0.5};
+float vibgyor[7] = {276.0, 209.0, 240.0, 120.0, 60.0, 30.0, 0.0};
+float vibgyor_s[7] = {1.0, 0.83, 1.0, 1.0, 1.0, 1.0, 1.0};
+float vibgyor_l[7] = {0.69, 0.3, 0.5, 0.25, 0.5, 0.5, 0.5};
 int colorIndex = 2;
-double hue = 240.0;
-double lightness = 0.5;
+float hue = 276.0;
+float saturation = 1.0;
+float lightness = 0.69;
 
 const int DELAY = 1000; // delay in ms between changing colors
 
@@ -64,8 +66,9 @@ void loop() {
   Serial.println(newPressure);
 
   if ((newPressure - oldPressure) > 50) {
-    colorIndex = (colorIndex + 1) % 3;
+    colorIndex = (colorIndex + 1) % 7;
     hue = vibgyor[colorIndex];
+    saturation = vibgyor_s[colorIndex];
     lightness = vibgyor_l[colorIndex];
     Serial.print("Pressure diff ====== ");
     Serial.println(hue);
@@ -73,23 +76,7 @@ void loop() {
   }
   oldPressure = newPressure;
 
-//  hslToRgb(hue,1,(LEDbrightness/255.0) * lightness, rgb);
-//  hsl2rgb(hue,1.0,lightness, rgb);
-  if (hue == 240.0) {
-    rgb[0] = 0;
-    rgb[1] = 0;
-    rgb[2] = 255;
-  }
-  if (hue == 120.0) {
-    rgb[0] = 0;
-    rgb[1] = 255;
-    rgb[2] = 0;
-  }
-  if (hue == 0.0) {
-    rgb[0] = 255;
-    rgb[1] = 0;
-    rgb[2] = 0;
-  }
+  hsl2rgb(hue/360.0, saturation, lightness * (LEDbrightness/255.0), rgb);
 
   Serial.print("::: ");
   Serial.print(rgb[0]);
@@ -101,43 +88,72 @@ void loop() {
   delay(DELAY);
 }
 
-//// https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
-///**
-// * Converts an HSL color value to RGB. Conversion formula
-// * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
-// * Assumes h, s, and l are contained in the set [0, 1] and
-// * returns r, g, and b in the set [0, 255].
-// *
-// * @param   Number  h       The hue
-// * @param   Number  s       The saturation
-// * @param   Number  l       The lightness
-// * @return  Array           The RGB representation
-// */
-//void hslToRgb(double h, double s, double l, byte rgb[]) {
-//    double r, g, b;
-//
-//    if (s == 0) {
-//        r = g = b = l; // achromatic
-//    } else {
-//        double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-//        double p = 2 * l - q;
-//        r = hue2rgb(p, q, h + 1/3.0);
-//        g = hue2rgb(p, q, h);
-//        b = hue2rgb(p, q, h - 1/3.0);
-//    }
-//
-//    rgb[0] = r * 255;
-//    rgb[1] = g * 255;
-//    rgb[2] = b * 255;
-//}
-//
-//double hue2rgb(double p, double q, double t) {
-//    if(t < 0) t += 1;
-//    if(t > 1) t -= 1;
-//    if(t < 1/6.0) return p + (q - p) * 6 * t;
-//    if(t < 1/2.0) return q;
-//    if(t < 2/3.0) return p + (q - p) * (2/3.0 - t) * 6;
-//    return p;
-//}
 
-// HSL to RGB conversion adapted from http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion and http://en.wikipedia.org/wiki/HSL_color_space
+// http://courses.ischool.berkeley.edu/i262/f13/content/clemensmeyer/lab-3-potentiometers-hsl-rgb.html
+
+void hsl2rgb (float h, float s, float l, int rgb[]) {
+
+  // Variables for conversion
+
+  float q = 0;
+
+  float t = 0;
+
+      
+
+  if (s == 0) {
+
+    r = g = b = l;  //achromatic
+
+  } else {
+
+    if (l < 0.5) {
+
+      q = l * (1 + s);
+
+    } else {
+
+      q = l + s - l * s;
+
+    }
+
+    float p = 2 * l - q;
+
+    
+
+    r = hue2rgb(p, q, h + 0.33) * 255;
+
+    g = hue2rgb(p, q, h) * 255;
+
+    b = hue2rgb(p, q, h - 0.33) * 255;
+
+  }
+
+  
+
+  rgb[0] = r;
+
+  rgb[1] = g;
+
+  rgb[2] = b;
+
+}
+
+ 
+
+float hue2rgb (float p, float q, float t) {
+
+  if(t < 0) {t += 1;}
+
+  if(t > 1) {t -= 1;}
+
+  if(t < 0.17) {return p + (q - p) * 6 * t;}
+
+  if(t < 0.5) {return q;}
+
+  if(t < 0.67) {return p + (q - p) * (0.67 - t) * 6;}
+
+  return p;
+ 
+
+}
