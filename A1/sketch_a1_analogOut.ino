@@ -12,13 +12,13 @@ int newPressure = 0;
 
 const int PRESSURE_PIN = A5;
 int pressureCellReading;
-int hue = 0;
 double temp = 0.0;
 byte rgb[3];
 int vibgyor[3] = {240, 120, 0};
 double vibgyor_l[3] = {0.5, 0.5, 0.5};
 int colorIndex = 2;
-double lightness = 1.0;
+int hue = 0;
+double lightness = 0.5;
 
 const int DELAY = 1000; // delay in ms between changing colors
 
