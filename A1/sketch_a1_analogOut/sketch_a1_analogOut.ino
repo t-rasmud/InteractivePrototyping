@@ -27,7 +27,7 @@ float hue;
 float saturation;
 float lightness;
 
-const int DELAY = 50; // delay in ms between changing colors
+const int DELAY = 30; // delay in ms between changing colors
 
 void setup() {
   // Set the RGB pins to output
@@ -59,10 +59,10 @@ void loop() {
   // http://eduardofv.com/2011/01/15/arduino-rgb-led-hsv-color-wheel/
 
   pressureCellReading = analogRead(PRESSURE_PIN);
-  newPressure = map(pressureCellReading, 70, 140, 0, 255);
+  newPressure = map(pressureCellReading, 370, 630, 0, 255);
   newPressure = constrain(newPressure, 0, 255);
   Serial.print("Pressure reading = ");
-  Serial.println(newPressure);
+  Serial.println(pressureCellReading);
 
   hue = vibgyor[colorIndex];
   saturation = vibgyor_s[colorIndex];
@@ -80,7 +80,7 @@ void loop() {
   analogWrite(RGB_RED_PIN, 255 - rgb[0]);     // turn on the red LED
   analogWrite(RGB_GREEN_PIN, 255 - rgb[1]);  // turn off the green LED
   analogWrite(RGB_BLUE_PIN, 255 - rgb[2]);    // turn on the blue LED
-  delay(DELAY);
+  delay(10);
 }
 
 
