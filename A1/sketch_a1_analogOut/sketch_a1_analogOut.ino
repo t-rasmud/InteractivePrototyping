@@ -85,7 +85,6 @@ void loop() {
   analogWrite(RGB_RED_PIN, 255 - rgb[0]);     // turn on the red LED
   analogWrite(RGB_GREEN_PIN, 255 - rgb[1]);  // turn off the green LED
   analogWrite(RGB_BLUE_PIN, 255 - rgb[2]);    // turn on the blue LED
-  delay(DELAY);
 }
 
 
