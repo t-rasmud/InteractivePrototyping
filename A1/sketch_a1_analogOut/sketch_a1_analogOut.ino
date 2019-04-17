@@ -66,8 +66,8 @@ void loop() {
   }
   oldPressure = newPressure;
 
-//  hslToRgb(hue,1,(LEDbrightness/255.0), rgb);
-  hslToRgb(hue,1,lightness, rgb);
+  hslToRgb(hue,1,(LEDbrightness/255.0) * lightness, rgb);
+//  hslToRgb(hue,1,lightness, rgb);
   
   analogWrite(RGB_RED_PIN, 255 - rgb[0]);     // turn on the red LED
   analogWrite(RGB_GREEN_PIN, 255 - rgb[1]);  // turn off the green LED
