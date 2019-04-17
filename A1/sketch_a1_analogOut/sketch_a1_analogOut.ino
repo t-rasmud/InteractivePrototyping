@@ -1,4 +1,3 @@
-
 const int RGB_RED_PIN = 6;
 const int RGB_GREEN_PIN  = 5;
 const int RGB_BLUE_PIN  = 3;
@@ -28,7 +27,7 @@ float hue;
 float saturation;
 float lightness;
 
-const int DELAY = 200; // delay in ms between changing colors
+const int DELAY = 50; // delay in ms between changing colors
 
 void setup() {
   // Set the RGB pins to output
@@ -70,9 +69,9 @@ void loop() {
   lightness = vibgyor_l[colorIndex];
   if ((newPressure - oldPressure) > 50) {
     colorIndex = (colorIndex + 1) % 7;
-    Serial.print("Pressure diff ====== ");
-    Serial.println(hue);
-    Serial.println(lightness);
+    if(colorIndex == 0) {
+      Serial.println("Rainbow");
+    }
   }
   oldPressure = newPressure;
 
