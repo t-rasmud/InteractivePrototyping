@@ -15,8 +15,10 @@ int pressureCellReading;
 int hue = 0;
 double temp = 0.0;
 byte rgb[3];
-int vibgyor[7] = {240, 120, 0};
+int vibgyor[3] = {240, 120, 0};
+double vibgyor_l[3] = {0.5, 0.5, 0.5};
 int colorIndex = 2;
+double lightness = 1.0;
 
 const int DELAY = 1000; // delay in ms between changing colors
 
@@ -57,13 +59,15 @@ void loop() {
 
   if ((newPressure - oldPressure) > 50) {
     hue = vibgyor[colorIndex];
+    lightness = vibgyor_l[colorIndex];
     colorIndex = (colorIndex + 1) % 3;
     Serial.print("Pressure diff ====== ");
     Serial.print(hue);
   }
   oldPressure = newPressure;
 
-  hslToRgb(hue,1,(LEDbrightness/255.0), rgb);
+//  hslToRgb(hue,1,(LEDbrightness/255.0), rgb);
+  hslToRgb(hue,1,lightness, rgb);
   
   analogWrite(RGB_RED_PIN, 255 - rgb[0]);     // turn on the red LED
   analogWrite(RGB_GREEN_PIN, 255 - rgb[1]);  // turn off the green LED
