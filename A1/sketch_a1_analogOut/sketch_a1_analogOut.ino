@@ -13,11 +13,17 @@ int newPressure = 0;
 const int PRESSURE_PIN = A5;
 int pressureCellReading;
 double temp = 0.0;
-byte rgb[3];
-int vibgyor[3] = {240, 120, 0};
-double vibgyor_l[3] = {0.5, 0.5, 0.5};
+
+// RGB Values
+int r = 0;        // Variables to store the RGB color values
+int b = 0;
+int g = 0;
+int rgb[3];
+
+double vibgyor[3] = {240.0, 120.0, 0.0};
+double vibgyor_l[3] = {0.5, 0.25, 0.5};
 int colorIndex = 2;
-int hue = 0;
+double hue = 240.0;
 double lightness = 0.5;
 
 const int DELAY = 1000; // delay in ms between changing colors
@@ -58,58 +64,80 @@ void loop() {
   Serial.println(newPressure);
 
   if ((newPressure - oldPressure) > 50) {
+    colorIndex = (colorIndex + 1) % 3;
     hue = vibgyor[colorIndex];
     lightness = vibgyor_l[colorIndex];
-    colorIndex = (colorIndex + 1) % 3;
     Serial.print("Pressure diff ====== ");
-    Serial.print(hue);
+    Serial.println(hue);
+    Serial.println(lightness);
   }
   oldPressure = newPressure;
 
-  hslToRgb(hue,1,(LEDbrightness/255.0) * lightness, rgb);
-//  hslToRgb(hue,1,lightness, rgb);
-  
+//  hslToRgb(hue,1,(LEDbrightness/255.0) * lightness, rgb);
+//  hsl2rgb(hue,1.0,lightness, rgb);
+  if (hue == 240.0) {
+    rgb[0] = 0;
+    rgb[1] = 0;
+    rgb[2] = 255;
+  }
+  if (hue == 120.0) {
+    rgb[0] = 0;
+    rgb[1] = 255;
+    rgb[2] = 0;
+  }
+  if (hue == 0.0) {
+    rgb[0] = 255;
+    rgb[1] = 0;
+    rgb[2] = 0;
+  }
+
+  Serial.print("::: ");
+  Serial.print(rgb[0]);
+  Serial.print(rgb[1]);
+  Serial.println(rgb[2]);
   analogWrite(RGB_RED_PIN, 255 - rgb[0]);     // turn on the red LED
   analogWrite(RGB_GREEN_PIN, 255 - rgb[1]);  // turn off the green LED
   analogWrite(RGB_BLUE_PIN, 255 - rgb[2]);    // turn on the blue LED
   delay(DELAY);
 }
 
-// https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
-/**
- * Converts an HSL color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes h, s, and l are contained in the set [0, 1] and
- * returns r, g, and b in the set [0, 255].
- *
- * @param   Number  h       The hue
- * @param   Number  s       The saturation
- * @param   Number  l       The lightness
- * @return  Array           The RGB representation
- */
-void hslToRgb(double h, double s, double l, byte rgb[]) {
-    double r, g, b;
+//// https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
+///**
+// * Converts an HSL color value to RGB. Conversion formula
+// * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+// * Assumes h, s, and l are contained in the set [0, 1] and
+// * returns r, g, and b in the set [0, 255].
+// *
+// * @param   Number  h       The hue
+// * @param   Number  s       The saturation
+// * @param   Number  l       The lightness
+// * @return  Array           The RGB representation
+// */
+//void hslToRgb(double h, double s, double l, byte rgb[]) {
+//    double r, g, b;
+//
+//    if (s == 0) {
+//        r = g = b = l; // achromatic
+//    } else {
+//        double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+//        double p = 2 * l - q;
+//        r = hue2rgb(p, q, h + 1/3.0);
+//        g = hue2rgb(p, q, h);
+//        b = hue2rgb(p, q, h - 1/3.0);
+//    }
+//
+//    rgb[0] = r * 255;
+//    rgb[1] = g * 255;
+//    rgb[2] = b * 255;
+//}
+//
+//double hue2rgb(double p, double q, double t) {
+//    if(t < 0) t += 1;
+//    if(t > 1) t -= 1;
+//    if(t < 1/6.0) return p + (q - p) * 6 * t;
+//    if(t < 1/2.0) return q;
+//    if(t < 2/3.0) return p + (q - p) * (2/3.0 - t) * 6;
+//    return p;
+//}
 
-    if (s == 0) {
-        r = g = b = l; // achromatic
-    } else {
-        double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        double p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3.0);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3.0);
-    }
-
-    rgb[0] = r * 255;
-    rgb[1] = g * 255;
-    rgb[2] = b * 255;
-}
-
-double hue2rgb(double p, double q, double t) {
-    if(t < 0) t += 1;
-    if(t > 1) t -= 1;
-    if(t < 1/6.0) return p + (q - p) * 6 * t;
-    if(t < 1/2.0) return q;
-    if(t < 2/3.0) return p + (q - p) * (2/3.0 - t) * 6;
-    return p;
-}
+// HSL to RGB conversion adapted from http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion and http://en.wikipedia.org/wiki/HSL_color_space
