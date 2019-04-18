@@ -1,4 +1,9 @@
-// https://blog.sourcerer.io/building-a-website-with-c-db942c801aee
+/*
+ * Creates an html file
+ * that displays the count of
+ * the word "Rainbow" in the Serial monitor.
+ * Code adapted from https://blog.sourcerer.io/building-a-website-with-c-db942c801aee
+ */
 
 #include <iostream>
 #include <string>
