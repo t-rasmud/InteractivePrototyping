@@ -24,6 +24,7 @@ void loop() {
   int potVal = analogRead(POT_INPUT_PIN);
   delay(10);
   int fsrVal = analogRead(FSR_INPUT_PIN);
+  Serial.println(fsrVal);
   
   // the analogRead on the Arduino Uno goes from 0 to 1023. We need to remap
   // this value to the smaller range (0-255) since the analogWrite function can 
@@ -32,12 +33,18 @@ void loop() {
   // non-linear mapping given that perceived LED brightness is not linear with current,
   // perhaps logarithmic)
   int ledVal = map(potVal, 0, MAX_ANALOG_INPUT_VAL, 0, 255);
-
+//  int ledVal = 0;
+  
   // If fsrVal is not 0, turn on the LED.
-  if (fsrVal != 0) {
+  if (fsrVal == 0) {
    analogWrite(RGB_RED_PIN, ledVal);     // turn on the red LED
    analogWrite(RGB_GREEN_PIN, ledVal);   // turn on the green LED
    analogWrite(RGB_BLUE_PIN, ledVal);    // turn on the blue LED 
+  }
+  else {
+    analogWrite(RGB_RED_PIN, 255);     // turn on the red LED
+    analogWrite(RGB_GREEN_PIN, 255);   // turn on the green LED
+    analogWrite(RGB_BLUE_PIN, 255);    // turn on the blue LED 
   }
   delay(10);
 }
